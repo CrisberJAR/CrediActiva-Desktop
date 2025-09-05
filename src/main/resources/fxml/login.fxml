@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pe.crediactiva.controller.LoginController">
+   <center>
+      <VBox alignment="CENTER" maxWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+         </padding>
+         <children>
+            <!-- Logo y título -->
+            <VBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c5aa0;" text="CrediActiva" />
+                  <Label style="-fx-font-size: 14px; -fx-text-fill: #666666;" text="Sistema de Gestión Financiera" />
+               </children>
+            </VBox>
+            
+            <!-- Separador -->
+            <Separator />
+            
+            <!-- Formulario de login -->
+            <VBox spacing="15.0">
+               <children>
+                  <!-- Campo Usuario -->
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-font-weight: bold;" text="Usuario:" />
+                        <TextField fx:id="usernameField" promptText="Ingrese su nombre de usuario" style="-fx-font-size: 14px; -fx-padding: 10;">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </TextField>
+                     </children>
+                  </VBox>
+                  
+                  <!-- Campo Contraseña -->
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-font-weight: bold;" text="Contraseña:" />
+                        <PasswordField fx:id="passwordField" promptText="Ingrese su contraseña" style="-fx-font-size: 14px; -fx-padding: 10;" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Mensaje de error -->
+                  <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false" />
+                  
+                  <!-- Botones -->
+                  <VBox spacing="10.0">
+                     <children>
+                        <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" onAction="#handleLogin" style="-fx-background-color: #2c5aa0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 12;" text="Iniciar Sesión" />
+                        <Button fx:id="cancelButton" maxWidth="1.7976931348623157E308" onAction="#handleCancel" style="-fx-background-color: #f0f0f0; -fx-text-fill: #333333; -fx-font-size: 12px; -fx-padding: 8;" text="Cancelar" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            
+            <!-- Información de usuarios de prueba -->
+            <VBox spacing="5.0">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-text-fill: #888888; -fx-font-weight: bold;" text="Usuarios de prueba:" />
+                  <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="admin / admin123 (Administrador)" />
+                  <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="asesor1 / asesor123 (Asesor)" />
+                  <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="cliente1 / cliente123 (Cliente)" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER" style="-fx-padding: 20;">
+         <children>
+            <Label style="-fx-font-size: 11px; -fx-text-fill: #999999;" text="CrediActiva Desktop v1.0 - © 2024 Todos los derechos reservados" />
+         </children>
+      </HBox>
+   </bottom>
+   <top>
+      <HBox alignment="CENTER_RIGHT" style="-fx-padding: 10;">
+         <children>
+            <Label fx:id="statusLabel" style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="Estado: Listo" />
+         </children>
+      </HBox>
+   </top>
+   <style>
+      -fx-background-color: linear-gradient(to bottom, #f0f8ff, #e6f3ff);
+   </style>
+</BorderPane>
+
+
