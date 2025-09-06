@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pe.crediactiva.controller.EditarUsuarioController">
+   <center>
+      <ScrollPane fitToHeight="true" fitToWidth="true">
+         <content>
+            <VBox spacing="20.0" style="-fx-padding: 30;">
+               <children>
+                  <!-- Título -->
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c5aa0;" text="Editar Usuario" />
+                        <Label fx:id="subtituloLabel" style="-fx-font-size: 14px; -fx-text-fill: #666666;" text="Modificar la información del usuario del sistema" />
+                        <Separator />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Formulario -->
+                  <GridPane hgap="15.0" vgap="15.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="300.0" />
+                     </columnConstraints>
+                     
+                     <!-- Información de Acceso -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0;" text="Información de Acceso" GridPane.columnSpan="2" GridPane.rowIndex="0" />
+                     
+                     <Label text="ID Usuario:" GridPane.rowIndex="1" />
+                     <HBox spacing="10.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <children>
+                           <Label fx:id="idLabel" style="-fx-font-weight: bold; -fx-text-fill: #2c5aa0;" text="ID" />
+                           <Label text="(No modificable)" style="-fx-font-size: 11px; -fx-text-fill: #999999;" />
+                        </children>
+                     </HBox>
+                     
+                     <Label text="Usuario:" GridPane.rowIndex="2" />
+                     <TextField fx:id="usernameField" promptText="Nombre de usuario único" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     
+                     <Label text="Email:" GridPane.rowIndex="3" />
+                     <TextField fx:id="emailField" promptText="correo@ejemplo.com" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     
+                     <!-- Información Personal -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0; -fx-padding: 20 0 0 0;" text="Información Personal" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+                     
+                     <Label text="Nombres:" GridPane.rowIndex="5" />
+                     <TextField fx:id="nombresField" promptText="Nombres completos" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                     
+                     <Label text="Apellidos:" GridPane.rowIndex="6" />
+                     <TextField fx:id="apellidosField" promptText="Apellidos completos" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                     
+                     <Label text="Documento de Identidad:" GridPane.rowIndex="7" />
+                     <TextField fx:id="documentoField" promptText="DNI, CE, etc. (opcional)" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                     
+                     <Label text="Teléfono:" GridPane.rowIndex="8" />
+                     <TextField fx:id="telefonoField" promptText="Número de teléfono (opcional)" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                     
+                     <Label text="Dirección:" GridPane.rowIndex="9" />
+                     <TextArea fx:id="direccionField" prefRowCount="2" promptText="Dirección completa (opcional)" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                     
+                     <!-- Configuración de Roles -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0; -fx-padding: 20 0 0 0;" text="Configuración de Roles" GridPane.columnSpan="2" GridPane.rowIndex="10" />
+                     
+                     <Label text="Roles Actuales:" GridPane.rowIndex="11" />
+                     <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                        <children>
+                           <ListView fx:id="rolesActualesListView" prefHeight="100.0" />
+                           <HBox spacing="10.0">
+                              <children>
+                                 <ComboBox fx:id="agregarRolComboBox" prefWidth="200.0" promptText="Seleccionar rol para agregar" />
+                                 <Button fx:id="agregarRolButton" onAction="#handleAgregarRol" style="-fx-background-color: #28a745; -fx-text-fill: white;" text="Agregar" />
+                                 <Button fx:id="removerRolButton" onAction="#handleRemoverRol" style="-fx-background-color: #dc3545; -fx-text-fill: white;" text="Remover" />
+                              </children>
+                           </HBox>
+                        </children>
+                     </VBox>
+                     
+                     <!-- Estado del Usuario -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0; -fx-padding: 20 0 0 0;" text="Estado del Usuario" GridPane.columnSpan="2" GridPane.rowIndex="12" />
+                     
+                     <Label text="Usuario Activo:" GridPane.rowIndex="13" />
+                     <CheckBox fx:id="activoCheckBox" text="El usuario puede acceder al sistema" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                     
+                     <!-- Información de Auditoría -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0; -fx-padding: 20 0 0 0;" text="Información de Auditoría" GridPane.columnSpan="2" GridPane.rowIndex="14" />
+                     
+                     <Label text="Fecha de Creación:" GridPane.rowIndex="15" />
+                     <Label fx:id="fechaCreacionLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                     
+                     <Label text="Última Actualización:" GridPane.rowIndex="16" />
+                     <Label fx:id="fechaActualizacionLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+                     
+                     <Label text="Último Login:" GridPane.rowIndex="17" />
+                     <Label fx:id="ultimoLoginLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                     
+                  </GridPane>
+                  
+                  <!-- Sección de cambio de contraseña -->
+                  <VBox spacing="15.0" style="-fx-background-color: #fff3cd; -fx-background-radius: 8; -fx-padding: 20; -fx-border-color: #ffeaa7; -fx-border-radius: 8;">
+                     <children>
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #856404;" text="⚠️ Cambio de Contraseña (Opcional)" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #856404;" text="Deje estos campos vacíos si no desea cambiar la contraseña del usuario" wrapText="true" />
+                        
+                        <GridPane hgap="15.0" vgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="300.0" />
+                           </columnConstraints>
+                           
+                           <Label text="Nueva Contraseña:" GridPane.rowIndex="0" />
+                           <PasswordField fx:id="nuevaPasswordField" promptText="Nueva contraseña (mínimo 6 caracteres)" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                           
+                           <Label text="Confirmar Contraseña:" GridPane.rowIndex="1" />
+                           <PasswordField fx:id="confirmarPasswordField" promptText="Repetir nueva contraseña" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        </GridPane>
+                     </children>
+                  </VBox>
+                  
+                  <!-- Botones de Acción -->
+                  <HBox alignment="CENTER_RIGHT" spacing="15.0" style="-fx-padding: 20 0 0 0;">
+                     <children>
+                        <Button fx:id="restaurarButton" onAction="#handleRestaurar" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-padding: 10 20;" text="Restaurar Valores" />
+                        <Button fx:id="cancelarButton" onAction="#handleCancelar" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-padding: 10 20;" text="Cancelar" />
+                        <Button fx:id="guardarButton" onAction="#handleGuardar" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold;" text="Guardar Cambios" />
+                     </children>
+                  </HBox>
+                  
+                  <!-- Información adicional -->
+                  <VBox spacing="10.0" style="-fx-padding: 20 0 0 0;">
+                     <children>
+                        <Separator />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666666;" text="Información Importante:" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="• Los cambios se aplicarán inmediatamente al guardar" wrapText="true" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="• El nombre de usuario y email deben ser únicos en el sistema" wrapText="true" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="• Si cambia la contraseña, el usuario deberá usar la nueva contraseña en su próximo login" wrapText="true" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="• Los roles determinan los permisos y accesos del usuario en el sistema" wrapText="true" />
+                     </children>
+                  </VBox>
+                  
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   
+   <!-- Barra superior con título -->
+   <top>
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #2c5aa0; -fx-padding: 15;">
+         <children>
+            <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text="CrediActiva - Editar Usuario" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="statusLabel" style="-fx-text-fill: white; -fx-font-size: 12px;" text="Formulario de Edición de Usuario" />
+         </children>
+      </HBox>
+   </top>
+   
+   <!-- Barra inferior con información -->
+   <bottom>
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 1 0 0 0; -fx-padding: 8 15;">
+         <children>
+            <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="💡 Tip: Revise cuidadosamente los cambios antes de guardar" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="timeLabel" style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

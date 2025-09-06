@@ -196,9 +196,17 @@ public class DashboardController implements Initializable {
     private void handleUsuarios() {
         logger.debug("Navegando a gestión de usuarios");
         statusLabel.setText("Estado: Cargando gestión de usuarios...");
-        // TODO: Implementar navegación a usuarios
-        CrediActivaApp.showInfoAlert("Próximamente", "Gestión de Usuarios", 
-                                   "Esta funcionalidad se implementará próximamente.");
+        
+        try {
+            // Cambiar a la pantalla de gestión de usuarios
+            CrediActivaApp.changeScene("/fxml/gestion-usuarios.fxml", "Gestión de Usuarios");
+            
+        } catch (Exception e) {
+            logger.error("Error al navegar a gestión de usuarios", e);
+            CrediActivaApp.showErrorAlert("Error", "Error de Navegación", 
+                                        "No se pudo cargar la gestión de usuarios: " + e.getMessage());
+            statusLabel.setText("Estado: Error al cargar gestión de usuarios");
+        }
     }
     
     @FXML
@@ -241,9 +249,90 @@ public class DashboardController implements Initializable {
     
     @FXML
     private void handleNuevoUsuario() {
-        logger.debug("Creando nuevo usuario");
-        CrediActivaApp.showInfoAlert("Próximamente", "Nuevo Usuario", 
-                                   "La funcionalidad de crear usuario se implementará próximamente.");
+        logger.debug("Abriendo formulario de nuevo usuario");
+        statusLabel.setText("Estado: Abriendo formulario de nuevo usuario...");
+        
+        try {
+            // Abrir ventana de nuevo usuario
+            CrediActivaApp.openNewWindow("/fxml/nuevo-usuario.fxml", 
+                                       "Crear Nuevo Usuario", 
+                                       800, 700, 
+                                       false);
+            
+            statusLabel.setText("Estado: Formulario de nuevo usuario abierto");
+            
+        } catch (Exception e) {
+            logger.error("Error al abrir formulario de nuevo usuario", e);
+            CrediActivaApp.showErrorAlert("Error", "Error al Abrir Formulario", 
+                                        "No se pudo abrir el formulario de nuevo usuario: " + e.getMessage());
+            statusLabel.setText("Estado: Error al abrir formulario");
+        }
+    }
+    
+    @FXML
+    private void handleCrearAsesor() {
+        logger.debug("Abriendo formulario de crear asesor directo");
+        statusLabel.setText("Estado: Abriendo formulario de crear asesor...");
+        
+        try {
+            // Abrir ventana de crear asesor directo
+            CrediActivaApp.openNewWindow("/fxml/crear-asesor-directo.fxml", 
+                                       "Crear Asesor Directo", 
+                                       500, 400, 
+                                       true);
+            
+            statusLabel.setText("Estado: Formulario de crear asesor abierto");
+            
+        } catch (Exception e) {
+            logger.error("Error al abrir formulario de crear asesor", e);
+            CrediActivaApp.showErrorAlert("Error", "Error al Abrir Formulario", 
+                                        "No se pudo abrir el formulario de crear asesor: " + e.getMessage());
+            statusLabel.setText("Estado: Error al abrir formulario");
+        }
+    }
+    
+    @FXML
+    private void handleInsertarRolDirecto() {
+        logger.debug("Abriendo formulario de INSERT DIRECTO");
+        statusLabel.setText("Estado: Abriendo INSERT DIRECTO...");
+        
+        try {
+            // Abrir ventana de INSERT directo
+            CrediActivaApp.openNewWindow("/fxml/insertar-rol-directo.fxml", 
+                                       "🎯 INSERT DIRECTO - Asignar Rol", 
+                                       700, 600, 
+                                       true);
+            
+            statusLabel.setText("Estado: Formulario INSERT DIRECTO abierto");
+            
+        } catch (Exception e) {
+            logger.error("Error al abrir formulario de INSERT directo", e);
+            CrediActivaApp.showErrorAlert("Error", "Error al Abrir Formulario", 
+                                        "No se pudo abrir el formulario de INSERT directo: " + e.getMessage());
+            statusLabel.setText("Estado: Error al abrir formulario");
+        }
+    }
+    
+    @FXML
+    private void handleAsignarRol() {
+        logger.debug("Abriendo formulario de asignación de roles");
+        statusLabel.setText("Estado: Abriendo formulario de asignación de roles...");
+        
+        try {
+            // Abrir ventana de asignación de roles
+            CrediActivaApp.openNewWindow("/fxml/asignar-rol.fxml", 
+                                       "Asignar Rol a Usuarios", 
+                                       900, 800, 
+                                       false);
+            
+            statusLabel.setText("Estado: Formulario de asignación de roles abierto");
+            
+        } catch (Exception e) {
+            logger.error("Error al abrir formulario de asignación de roles", e);
+            CrediActivaApp.showErrorAlert("Error", "Error al Abrir Formulario", 
+                                        "No se pudo abrir el formulario de asignación de roles: " + e.getMessage());
+            statusLabel.setText("Estado: Error al abrir formulario");
+        }
     }
     
     @FXML

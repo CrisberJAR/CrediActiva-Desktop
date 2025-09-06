@@ -86,6 +86,35 @@ CREATE TABLE asesores (
     CONSTRAINT chk_comision_porcentaje CHECK (comision_porcentaje >= 0 AND comision_porcentaje <= 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Tabla: clientes (información específica de clientes)
+CREATE TABLE clientes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT NOT NULL UNIQUE,
+    codigo_cliente VARCHAR(20) NOT NULL UNIQUE,
+    tipo_cliente ENUM('NUEVO', 'RECURRENTE', 'VIP') DEFAULT 'NUEVO',
+    limite_credito DECIMAL(12,2) DEFAULT 0.00,
+    score_crediticio INT DEFAULT 0, -- 0-1000
+    ingresos_declarados DECIMAL(12,2) DEFAULT 0.00,
+    ocupacion VARCHAR(100),
+    empresa VARCHAR(100),
+    referencias_personales TEXT,
+    activo BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    
+    INDEX idx_clientes_codigo (codigo_cliente),
+    INDEX idx_clientes_usuario (usuario_id),
+    INDEX idx_clientes_tipo (tipo_cliente),
+    INDEX idx_clientes_activo (activo),
+    INDEX idx_clientes_score (score_crediticio),
+    
+    CONSTRAINT chk_limite_credito CHECK (limite_credito >= 0),
+    CONSTRAINT chk_score_crediticio CHECK (score_crediticio >= 0 AND score_crediticio <= 1000),
+    CONSTRAINT chk_ingresos_declarados CHECK (ingresos_declarados >= 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabla: solicitudes
 CREATE TABLE solicitudes (
     id INT PRIMARY KEY AUTO_INCREMENT,

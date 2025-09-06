@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import pe.crediactiva.dao.interfaces.UsuarioDAO;
 import pe.crediactiva.dao.mysql.UsuarioDAOImpl;
 import pe.crediactiva.model.Usuario;
+import pe.crediactiva.model.enums.TipoRol;
 import pe.crediactiva.security.PasswordEncoder;
 
 import java.util.List;
@@ -291,6 +292,20 @@ public class UsuarioService {
     }
     
     /**
+     * Obtiene todos los usuarios del sistema (activos e inactivos).
+     * 
+     * @return lista de todos los usuarios
+     */
+    public List<Usuario> obtenerTodosLosUsuarios() {
+        try {
+            return usuarioDAO.findAll();
+        } catch (Exception e) {
+            logger.error("Error al obtener todos los usuarios", e);
+            return List.of();
+        }
+    }
+    
+    /**
      * Busca usuarios por rol.
      * 
      * @param rolNombre nombre del rol
@@ -369,6 +384,133 @@ public class UsuarioService {
         } catch (Exception e) {
             logger.error("Error al contar usuarios activos", e);
             return 0;
+        }
+    }
+    
+    /**
+     * Crea registros adicionales necesarios según el tipo de rol asignado.
+     * Por ejemplo, si se asigna rol ASESOR, crea un registro en la tabla asesores.
+     * 
+     * @param usuarioId ID del usuario
+     * @param tipoRol tipo de rol asignado
+     * @return true si se crearon exitosamente los registros adicionales
+     */
+    public boolean crearRegistrosEspecialesPorRol(Integer usuarioId, TipoRol tipoRol) {
+        logger.info("🔄 INICIANDO creación de registros especiales para usuario {} con rol {}", usuarioId, tipoRol);
+        
+        try {
+            if (tipoRol == TipoRol.ASESOR) {
+                logger.info("📋 Creando registro de ASESOR para usuario {}", usuarioId);
+                boolean resultado = crearRegistroAsesor(usuarioId);
+                logger.info("📋 Resultado creación ASESOR: {}", resultado ? "✅ ÉXITO" : "❌ FALLÓ");
+                return resultado;
+            } else if (tipoRol == TipoRol.CLIENTE) {
+                logger.info("👤 Creando registro de CLIENTE para usuario {}", usuarioId);
+                boolean resultado = crearRegistroCliente(usuarioId);
+                logger.info("👤 Resultado creación CLIENTE: {}", resultado ? "✅ ÉXITO" : "❌ FALLÓ");
+                return resultado;
+            }
+            
+            // Para otros roles no hay registros adicionales por ahora
+            logger.info("ℹ️ Rol {} no requiere registros especiales", tipoRol);
+            return true;
+            
+        } catch (Exception e) {
+            logger.error("💥 ERROR CRÍTICO al crear registros especiales para usuario {} con rol {}", usuarioId, tipoRol, e);
+            return false;
+        }
+    }
+    
+    /**
+     * Crea un registro de asesor para el usuario especificado.
+     * 
+     * @param usuarioId ID del usuario
+     * @return true si se creó exitosamente
+     */
+    private boolean crearRegistroAsesor(Integer usuarioId) {
+        logger.info("🏢 INICIANDO creación de registro ASESOR para usuario {}", usuarioId);
+        
+        try {
+            // Importar AsesorService aquí para evitar dependencia circular
+            pe.crediactiva.service.AsesorService asesorService = new pe.crediactiva.service.AsesorService();
+            
+            // Verificar si ya existe un asesor para este usuario
+            if (asesorService.esAsesor(usuarioId)) {
+                logger.info("✅ El usuario {} ya tiene un registro de asesor - NO es necesario crear", usuarioId);
+                return true;
+            }
+            
+            logger.info("🔍 Usuario {} no tiene registro de asesor - procediendo a crear", usuarioId);
+            
+            // Obtener el usuario
+            Optional<Usuario> usuarioOpt = usuarioDAO.findById(usuarioId);
+            if (usuarioOpt.isEmpty()) {
+                logger.error("❌ Usuario no encontrado: {}", usuarioId);
+                return false;
+            }
+            
+            Usuario usuario = usuarioOpt.get();
+            logger.info("👤 Usuario encontrado: {} - {}", usuario.getUsername(), usuario.getNombreCompleto());
+            
+            // Crear el asesor
+            logger.info("🚀 Llamando a asesorService.crearAsesor()...");
+            pe.crediactiva.model.Asesor asesor = asesorService.crearAsesor(usuario);
+            
+            if (asesor != null) {
+                logger.info("✅ ÉXITO: Registro de asesor creado para usuario: {} - Código: {}", 
+                           usuario.getUsername(), asesor.getCodigoAsesor());
+                return true;
+            } else {
+                logger.error("❌ FALLÓ: asesorService.crearAsesor() retornó null");
+                return false;
+            }
+            
+        } catch (Exception e) {
+            logger.error("💥 EXCEPCIÓN al crear registro de asesor para usuario: {}", usuarioId, e);
+            return false;
+        }
+    }
+    
+    /**
+     * Crea un registro de cliente para el usuario especificado.
+     * 
+     * @param usuarioId ID del usuario
+     * @return true si se creó exitosamente
+     */
+    private boolean crearRegistroCliente(Integer usuarioId) {
+        try {
+            // Importar ClienteService aquí para evitar dependencia circular
+            pe.crediactiva.service.ClienteService clienteService = new pe.crediactiva.service.ClienteService();
+            
+            // Verificar si ya existe un cliente para este usuario
+            if (clienteService.esCliente(usuarioId)) {
+                logger.debug("El usuario {} ya tiene un registro de cliente", usuarioId);
+                return true;
+            }
+            
+            // Obtener el usuario
+            Optional<Usuario> usuarioOpt = usuarioDAO.findById(usuarioId);
+            if (usuarioOpt.isEmpty()) {
+                logger.error("Usuario no encontrado: {}", usuarioId);
+                return false;
+            }
+            
+            Usuario usuario = usuarioOpt.get();
+            
+            // Crear el cliente
+            pe.crediactiva.model.Cliente cliente = clienteService.crearCliente(usuario);
+            
+            if (cliente != null) {
+                logger.info("Registro de cliente creado exitosamente para usuario: {} - Código: {}", 
+                           usuario.getUsername(), cliente.getCodigoCliente());
+                return true;
+            }
+            
+            return false;
+            
+        } catch (Exception e) {
+            logger.error("Error al crear registro de cliente para usuario: {}", usuarioId, e);
+            return false;
         }
     }
     

@@ -26,7 +26,7 @@
         <logback.version>1.4.14</logback.version>
         <jbcrypt.version>0.4</jbcrypt.version>
         <junit.version>5.10.1</junit.version>
-        <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
+        <javafx.maven.plugin.version>0.0.6</javafx.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -98,6 +98,15 @@
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${javafx.maven.plugin.version}</version>
+                <configuration>
+                    <mainClass>pe.crediactiva.app.CrediActivaApp</mainClass>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.1</version>
                 <configuration>
                     <mainClass>pe.crediactiva.app.CrediActivaApp</mainClass>
                 </configuration>

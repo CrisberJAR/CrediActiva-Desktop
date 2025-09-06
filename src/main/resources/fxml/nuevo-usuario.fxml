@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pe.crediactiva.controller.NuevoUsuarioController">
+   <center>
+      <ScrollPane fitToHeight="true" fitToWidth="true">
+         <content>
+            <VBox spacing="20.0" style="-fx-padding: 30;">
+               <children>
+                  <!-- Título -->
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c5aa0;" text="Crear Nuevo Usuario" />
+                        <Label style="-fx-font-size: 14px; -fx-text-fill: #666666;" text="Complete la información del nuevo usuario del sistema" />
+                        <Separator />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Formulario -->
+                  <GridPane hgap="15.0" vgap="15.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="300.0" />
+                     </columnConstraints>
+                     
+                     <!-- Información de Acceso -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0;" text="Información de Acceso" GridPane.columnSpan="2" GridPane.rowIndex="0" />
+                     
+                     <Label text="Usuario:" GridPane.rowIndex="1" />
+                     <TextField fx:id="usernameField" promptText="Nombre de usuario único" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                     
+                     <Label text="Email:" GridPane.rowIndex="2" />
+                     <TextField fx:id="emailField" promptText="correo@ejemplo.com" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     
+                     <Label text="Contraseña:" GridPane.rowIndex="3" />
+                     <PasswordField fx:id="passwordField" promptText="Mínimo 6 caracteres" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     
+                     <Label text="Confirmar Contraseña:" GridPane.rowIndex="4" />
+                     <PasswordField fx:id="confirmPasswordField" promptText="Repetir contraseña" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                     
+                     <!-- Información Personal -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0; -fx-padding: 20 0 0 0;" text="Información Personal" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+                     
+                     <Label text="Nombres:" GridPane.rowIndex="6" />
+                     <TextField fx:id="nombresField" promptText="Nombres completos" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                     
+                     <Label text="Apellidos:" GridPane.rowIndex="7" />
+                     <TextField fx:id="apellidosField" promptText="Apellidos completos" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                     
+                     <Label text="Documento de Identidad:" GridPane.rowIndex="8" />
+                     <TextField fx:id="documentoField" promptText="DNI, CE, etc. (opcional)" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                     
+                     <Label text="Teléfono:" GridPane.rowIndex="9" />
+                     <TextField fx:id="telefonoField" promptText="Número de teléfono (opcional)" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                     
+                     <Label text="Dirección:" GridPane.rowIndex="10" />
+                     <TextArea fx:id="direccionField" prefRowCount="2" promptText="Dirección completa (opcional)" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                     
+                     <!-- Configuración de Rol -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0; -fx-padding: 20 0 0 0;" text="Configuración de Rol" GridPane.columnSpan="2" GridPane.rowIndex="11" />
+                     
+                     <Label text="Rol del Usuario:" GridPane.rowIndex="12" />
+                     <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                        <children>
+                           <ComboBox fx:id="rolComboBox" prefWidth="300.0" promptText="Seleccione un rol" />
+                           <Label fx:id="rolDescripcionLabel" style="-fx-font-size: 12px; -fx-text-fill: #666666;" text="Seleccione un rol para ver su descripción" wrapText="true" />
+                        </children>
+                     </VBox>
+                     
+                     <!-- Estado del Usuario -->
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c5aa0; -fx-padding: 20 0 0 0;" text="Estado del Usuario" GridPane.columnSpan="2" GridPane.rowIndex="13" />
+                     
+                     <Label text="Usuario Activo:" GridPane.rowIndex="14" />
+                     <CheckBox fx:id="activoCheckBox" selected="true" text="El usuario puede acceder al sistema" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                     
+                  </GridPane>
+                  
+                  <!-- Botones de Acción -->
+                  <HBox alignment="CENTER_RIGHT" spacing="15.0" style="-fx-padding: 20 0 0 0;">
+                     <children>
+                        <Button fx:id="limpiarButton" onAction="#handleLimpiar" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-padding: 10 20;" text="Limpiar Formulario" />
+                        <Button fx:id="cancelarButton" onAction="#handleCancelar" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-padding: 10 20;" text="Cancelar" />
+                        <Button fx:id="crearButton" onAction="#handleCrear" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold;" text="Crear Usuario" />
+                     </children>
+                  </HBox>
+                  
+                  <!-- Información adicional -->
+                  <VBox spacing="10.0" style="-fx-padding: 20 0 0 0;">
+                     <children>
+                        <Separator />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #666666;" text="Información Importante:" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="• El nombre de usuario debe ser único en el sistema" wrapText="true" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="• El email debe ser válido y único para cada usuario" wrapText="true" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="• La contraseña debe tener al menos 6 caracteres" wrapText="true" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="• Los usuarios pueden tener múltiples roles según sus responsabilidades" wrapText="true" />
+                     </children>
+                  </VBox>
+                  
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   
+   <!-- Barra superior con título -->
+   <top>
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #2c5aa0; -fx-padding: 15;">
+         <children>
+            <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text="CrediActiva - Gestión de Usuarios" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="statusLabel" style="-fx-text-fill: white; -fx-font-size: 12px;" text="Formulario de Nuevo Usuario" />
+         </children>
+      </HBox>
+   </top>
+   
+   <!-- Barra inferior con información -->
+   <bottom>
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 1 0 0 0; -fx-padding: 8 15;">
+         <children>
+            <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="💡 Tip: Verifique toda la información antes de crear el usuario" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="timeLabel" style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

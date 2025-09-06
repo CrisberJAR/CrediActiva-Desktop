@@ -205,6 +205,21 @@ public class CrediActivaApp extends Application {
     }
     
     /**
+     * Muestra un diálogo de advertencia.
+     * 
+     * @param title título del diálogo
+     * @param header encabezado del mensaje
+     * @param content contenido del mensaje
+     */
+    public static void showWarningAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    
+    /**
      * Muestra un diálogo de confirmación.
      * 
      * @param title título del diálogo
@@ -218,6 +233,63 @@ public class CrediActivaApp extends Application {
         alert.setHeaderText(header);
         alert.setContentText(content);
         return alert.showAndWait().orElse(null) == javafx.scene.control.ButtonType.OK;
+    }
+    
+    /**
+     * Abre una nueva ventana con el archivo FXML especificado.
+     * 
+     * @param fxmlPath ruta del archivo FXML
+     * @param title título de la ventana
+     * @param width ancho de la ventana
+     * @param height alto de la ventana
+     * @param modal si la ventana debe ser modal
+     */
+    public static void openNewWindow(String fxmlPath, String title, double width, double height, boolean modal) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(CrediActivaApp.class.getResource(fxmlPath));
+            Scene scene = new Scene(fxmlLoader.load());
+            
+            // Aplicar CSS
+            try (InputStream cssStream = CrediActivaApp.class.getResourceAsStream("/css/styles.css")) {
+                if (cssStream != null) {
+                    scene.getStylesheets().add(CrediActivaApp.class.getResource("/css/styles.css").toExternalForm());
+                }
+            } catch (IOException e) {
+                logger.warn("No se pudo cargar el archivo CSS para la nueva ventana", e);
+            }
+            
+            Stage newStage = new Stage();
+            newStage.setTitle(title);
+            newStage.setScene(scene);
+            newStage.setWidth(width);
+            newStage.setHeight(height);
+            newStage.setResizable(true);
+            
+            // Configurar modalidad
+            if (modal) {
+                newStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+                newStage.initOwner(primaryStage);
+            }
+            
+            // Configurar icono si está disponible
+            try (InputStream iconStream = CrediActivaApp.class.getResourceAsStream("/icons/app-icon.png")) {
+                if (iconStream != null) {
+                    newStage.getIcons().add(new Image(iconStream));
+                }
+            } catch (IOException e) {
+                logger.warn("No se pudo cargar el icono para la nueva ventana", e);
+            }
+            
+            newStage.show();
+            
+            logger.debug("Nueva ventana abierta: {}", fxmlPath);
+            
+        } catch (IOException e) {
+            logger.error("Error al abrir nueva ventana: {}", fxmlPath, e);
+            showErrorAlert("Error de Navegación", 
+                          "No se pudo abrir la ventana solicitada", 
+                          "Error: " + e.getMessage());
+        }
     }
     
     /**

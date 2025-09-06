@@ -142,6 +142,9 @@
                         <HBox spacing="15.0">
                            <children>
                               <Button onAction="#handleNuevoUsuario" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-padding: 10 20;" text="➕ Nuevo Usuario" />
+                              <Button onAction="#handleInsertarRolDirecto" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold;" text="🎯 INSERT DIRECTO" />
+                              <Button onAction="#handleCrearAsesor" style="-fx-background-color: #fd7e14; -fx-text-fill: white; -fx-padding: 10 20;" text="🏢 Crear Asesor Directo" />
+                              <Button onAction="#handleAsignarRol" style="-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-padding: 10 20;" text="🎭 Asignar Rol a Usuarios" />
                               <Button onAction="#handleRevisarSolicitudes" style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-padding: 10 20;" text="📋 Revisar Solicitudes" />
                               <Button onAction="#handleGenerarReporte" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-padding: 10 20;" text="📊 Generar Reporte" />
                               <Button onAction="#handleActualizarDatos" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-padding: 10 20;" text="🔄 Actualizar Datos" />

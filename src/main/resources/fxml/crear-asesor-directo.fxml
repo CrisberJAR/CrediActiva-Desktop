@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pe.crediactiva.controller.CrearAsesorDirectoController" spacing="20.0" style="-fx-padding: 30; -fx-background-color: #f8f9fa;">
+   <children>
+      <!-- Título -->
+      <HBox alignment="CENTER" style="-fx-background-color: #007bff; -fx-background-radius: 8; -fx-padding: 15;">
+         <children>
+            <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text="🏢 Crear Asesor Directo" />
+         </children>
+      </HBox>
+      
+      <!-- Formulario -->
+      <VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+         <children>
+            <!-- Selección de usuario -->
+            <VBox spacing="8.0">
+               <children>
+                  <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="1. Seleccionar Usuario:" />
+                  <ComboBox fx:id="usuarioComboBox" prefWidth="400.0" promptText="Seleccione un usuario..." />
+                  <Label fx:id="usuarioInfoLabel" style="-fx-font-size: 12px; -fx-text-fill: #666666;" text="Seleccione un usuario" />
+               </children>
+            </VBox>
+            
+            <Separator />
+            
+            <!-- Campos del asesor -->
+            <VBox spacing="15.0">
+               <children>
+                  <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="2. Datos del Asesor:" />
+                  
+                  <GridPane hgap="15.0" vgap="12.0">
+                     <columnConstraints>
+                        <ColumnConstraints minWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                     </columnConstraints>
+                     <children>
+                        <Label text="Código Asesor:" />
+                        <TextField fx:id="codigoField" promptText="Se generará automáticamente" GridPane.columnIndex="1" editable="false" />
+                        
+                        <Label text="Comisión (%):" GridPane.rowIndex="1" />
+                        <TextField fx:id="comisionField" promptText="Ej: 2.5" text="2.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        
+                        <Label text="Meta Mensual (S/):" GridPane.rowIndex="2" />
+                        <TextField fx:id="metaField" promptText="Ej: 50000.00" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+               </children>
+            </VBox>
+            
+            <Separator />
+            
+            <!-- Botones -->
+            <HBox spacing="15.0" alignment="CENTER">
+               <children>
+                  <Button fx:id="crearButton" onAction="#handleCrear" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-padding: 12 25; -fx-font-size: 14px; -fx-font-weight: bold;" text="✅ Crear Asesor" disable="true" />
+                  <Button fx:id="limpiarButton" onAction="#handleLimpiar" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-padding: 12 25;" text="🗑️ Limpiar" />
+                  <Button fx:id="cerrarButton" onAction="#handleCerrar" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-padding: 12 25;" text="❌ Cerrar" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      
+      <!-- Estado -->
+      <Label fx:id="statusLabel" style="-fx-font-size: 13px; -fx-text-fill: #666666;" text="Seleccione un usuario para comenzar" />
+   </children>
+</VBox>

@@ -30,6 +30,12 @@ INSERT INTO usuarios_roles (usuario_id, rol_id) VALUES
 INSERT INTO asesores (usuario_id, codigo_asesor, comision_porcentaje, meta_mensual) VALUES
 (2, 'ASE001', 0.0250, 50000.00); -- 2.5% de comisión, meta de S/ 50,000
 
+-- Insertar información de clientes
+INSERT INTO clientes (usuario_id, codigo_cliente, tipo_cliente, limite_credito, score_crediticio, ingresos_declarados, ocupacion, empresa) VALUES
+(3, 'CLI001', 'RECURRENTE', 25000.00, 750, 3000.00, 'Comerciante', 'Negocio Propio'),
+(4, 'CLI002', 'NUEVO', 20000.00, 680, 4500.00, 'Empleado', 'Empresa ABC SAC'),
+(5, 'CLI003', 'NUEVO', 15000.00, 720, 2800.00, 'Independiente', 'Consultoría');
+
 -- Insertar solicitudes de ejemplo
 INSERT INTO solicitudes (
     numero_solicitud, cliente_id, asesor_id, nombres_cliente, apellidos_cliente, 

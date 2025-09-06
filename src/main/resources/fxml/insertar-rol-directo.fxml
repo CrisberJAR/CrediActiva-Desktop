@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pe.crediactiva.controller.InsertarRolDirectoController">
+   <children>
+      <!-- Header -->
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
+         <children>
+            <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text="🎯 INSERT DIRECTO - Asignar Rol" />
+         </children>
+      </HBox>
+
+      <!-- Contenido Principal -->
+      <ScrollPane fitToWidth="true" style="-fx-background-color: #ecf0f1;">
+         <content>
+            <VBox spacing="20.0" style="-fx-padding: 30;">
+               <children>
+                  
+                  <!-- Selección de Usuario -->
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="👤 Seleccionar Usuario:" />
+                        <ComboBox fx:id="usuarioComboBox" maxWidth="1.7976931348623157E308" promptText="Seleccione un usuario..." />
+                        <Label fx:id="usuarioInfoLabel" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" text="ID del usuario aparecerá aquí" />
+                     </children>
+                  </VBox>
+
+                  <!-- Selección de Rol -->
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="🎭 Seleccionar Rol:" />
+                        <ComboBox fx:id="rolComboBox" maxWidth="1.7976931348623157E308" promptText="Seleccione un rol..." />
+                        <Label fx:id="rolInfoLabel" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;" text="ID del rol aparecerá aquí" />
+                     </children>
+                  </VBox>
+
+                  <!-- Campos Específicos por Rol -->
+                  <VBox fx:id="camposEspecificosContainer" spacing="15.0" visible="false">
+                     
+                     <!-- Campos para ASESOR -->
+                     <VBox fx:id="camposAsesor" spacing="10.0" visible="false">
+                        <children>
+                           <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e67e22;" text="🏢 Datos del Asesor:" />
+                           <GridPane hgap="15.0" vgap="10.0">
+                              <columnConstraints>
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                              <children>
+                                 <Label text="Comisión (%):" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                 <TextField fx:id="comisionField" promptText="Ej: 2.5" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                 <Label text="Meta Mensual (S/):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                 <TextField fx:id="metaMensualField" promptText="Ej: 50000.00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              </children>
+                           </GridPane>
+                        </children>
+                     </VBox>
+
+                     <!-- Campos para CLIENTE -->
+                     <VBox fx:id="camposCliente" spacing="10.0" visible="false">
+                        <children>
+                           <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3498db;" text="👤 Datos del Cliente:" />
+                           <GridPane hgap="15.0" vgap="10.0">
+                              <columnConstraints>
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                              <children>
+                                 <Label text="Límite Crédito (S/):" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                 <TextField fx:id="limiteCreditoField" promptText="Ej: 25000.00" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                 <Label text="Score Crediticio:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                 <TextField fx:id="scoreCrediticioField" promptText="Ej: 750 (0-1000)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              </children>
+                           </GridPane>
+                        </children>
+                     </VBox>
+                  </VBox>
+
+                  <!-- Preview del INSERT -->
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="📋 Preview del INSERT:" />
+                        <TextArea fx:id="previewTextArea" editable="false" prefRowCount="4" style="-fx-font-family: 'Courier New'; -fx-font-size: 12px; -fx-background-color: #2c3e50; -fx-text-fill: #ecf0f1;" wrapText="true" />
+                     </children>
+                  </VBox>
+
+                  <!-- Botones de Acción -->
+                  <HBox alignment="CENTER" spacing="15.0" style="-fx-padding: 20 0 0 0;">
+                     <children>
+                        <Button onAction="#handleEjecutarInsert" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-padding: 12 25; -fx-font-size: 14px; -fx-font-weight: bold;" text="🚀 EJECUTAR INSERT" />
+                        <Button onAction="#handleLimpiar" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 12 25; -fx-font-size: 14px;" text="🧹 Limpiar" />
+                        <Button onAction="#handleCerrar" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 12 25; -fx-font-size: 14px;" text="❌ Cerrar" />
+                     </children>
+                  </HBox>
+
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+</VBox>

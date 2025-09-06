@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pe.crediactiva.controller.AsignarRolController">
+   <top>
+      <!-- Barra superior -->
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #17a2b8; -fx-padding: 15;">
+         <children>
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;" text="🎭 Asignar Rol a Usuarios" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="timeLabel" style="-fx-text-fill: white; -fx-font-size: 12px;" text="Fecha/Hora" />
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <ScrollPane fitToHeight="true" fitToWidth="true">
+         <content>
+            <VBox spacing="20.0" style="-fx-padding: 30;">
+               <children>
+                  <!-- Instrucciones -->
+                  <VBox spacing="10.0" style="-fx-background-color: #e7f3ff; -fx-background-radius: 8; -fx-padding: 15; -fx-border-color: #007bff; -fx-border-radius: 8;">
+                     <children>
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #004085;" text="ℹ️ Instrucciones" />
+                        <Label style="-fx-font-size: 13px; -fx-text-fill: #004085;" text="Esta herramienta permite asignar roles a usuarios y completar automáticamente los registros especiales requeridos." wrapText="true" />
+                        <Label style="-fx-font-size: 13px; -fx-text-fill: #004085;" text="• Para ASESOR: Se creará registro en tabla 'asesores' con código, comisión y meta." wrapText="true" />
+                        <Label style="-fx-font-size: 13px; -fx-text-fill: #004085;" text="• Para CLIENTE: Se creará registro en tabla 'clientes' con código, límite crediticio y score." wrapText="true" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Formulario principal -->
+                  <VBox spacing="25.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 2); -fx-padding: 30;">
+                     <children>
+                        <!-- Título del formulario -->
+                        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333333;" text="Selección de Usuario y Rol" />
+                        
+                        <!-- Selección de usuario -->
+                        <VBox spacing="8.0">
+                           <children>
+                              <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="1. Seleccionar Usuario:" />
+                              <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                 <children>
+                                    <ComboBox fx:id="usuarioComboBox" prefWidth="300.0" promptText="Seleccione un usuario..." />
+                                    <Button fx:id="buscarUsuarioButton" onAction="#handleBuscarUsuario" style="-fx-background-color: #6c757d; -fx-text-fill: white;" text="🔍 Buscar" />
+                                    <Button fx:id="refrescarUsuariosButton" onAction="#handleRefrescarUsuarios" style="-fx-background-color: #28a745; -fx-text-fill: white;" text="🔄 Refrescar" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="usuarioInfoLabel" style="-fx-font-size: 12px; -fx-text-fill: #666666;" text="Seleccione un usuario para ver su información" />
+                           </children>
+                        </VBox>
+                        
+                        <!-- Información del usuario seleccionado -->
+                        <VBox fx:id="usuarioDetalleVBox" spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-padding: 15;" visible="false">
+                           <children>
+                              <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Información del Usuario:" />
+                              <GridPane hgap="15.0" vgap="8.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints minWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" />
+                                 </columnConstraints>
+                                 <children>
+                                    <Label style="-fx-font-weight: bold;" text="Username:" />
+                                    <Label fx:id="usernameLabel" style="-fx-text-fill: #007bff;" text="-" GridPane.columnIndex="1" />
+                                    
+                                    <Label style="-fx-font-weight: bold;" text="Nombre completo:" GridPane.rowIndex="1" />
+                                    <Label fx:id="nombreCompletoLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    
+                                    <Label style="-fx-font-weight: bold;" text="Email:" GridPane.rowIndex="2" />
+                                    <Label fx:id="emailLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    
+                                    <Label style="-fx-font-weight: bold;" text="Roles actuales:" GridPane.rowIndex="3" />
+                                    <Label fx:id="rolesActualesLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </VBox>
+                        
+                        <!-- Selección de rol -->
+                        <VBox spacing="8.0">
+                           <children>
+                              <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="2. Seleccionar Rol a Asignar:" />
+                              <ComboBox fx:id="rolComboBox" prefWidth="300.0" promptText="Seleccione un rol..." />
+                              <Label fx:id="rolDescripcionLabel" style="-fx-font-size: 12px; -fx-text-fill: #666666;" text="Seleccione un rol para ver su descripción" wrapText="true" />
+                           </children>
+                        </VBox>
+                        
+                        <!-- Configuración específica por rol -->
+                        <VBox fx:id="configuracionRolVBox" spacing="15.0" visible="false">
+                           <children>
+                              <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="3. Configuración Específica del Rol:" />
+                              
+                              <!-- Configuración para ASESOR -->
+                              <VBox fx:id="configuracionAsesorVBox" spacing="10.0" visible="false">
+                                 <children>
+                                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #17a2b8;" text="📋 Configuración de Asesor:" />
+                                    <GridPane hgap="15.0" vgap="10.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints minWidth="150.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" />
+                                       </columnConstraints>
+                                       <children>
+                                          <Label text="Código de Asesor:" />
+                                          <TextField fx:id="codigoAsesorField" promptText="Se generará automáticamente" GridPane.columnIndex="1" editable="false" />
+                                          
+                                          <Label text="Comisión (%):" GridPane.rowIndex="1" />
+                                          <TextField fx:id="comisionField" promptText="Ej: 2.5" text="2.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          
+                                          <Label text="Meta Mensual (S/):" GridPane.rowIndex="2" />
+                                          <TextField fx:id="metaMensualField" promptText="Ej: 50000.00" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                              
+                              <!-- Configuración para CLIENTE -->
+                              <VBox fx:id="configuracionClienteVBox" spacing="10.0" visible="false">
+                                 <children>
+                                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #28a745;" text="👤 Configuración de Cliente:" />
+                                    <GridPane hgap="15.0" vgap="10.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints minWidth="150.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" />
+                                       </columnConstraints>
+                                       <children>
+                                          <Label text="Código de Cliente:" />
+                                          <TextField fx:id="codigoClienteField" promptText="Se generará automáticamente" GridPane.columnIndex="1" editable="false" />
+                                          
+                                          <Label text="Tipo de Cliente:" GridPane.rowIndex="1" />
+                                          <ComboBox fx:id="tipoClienteComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          
+                                          <Label text="Límite de Crédito (S/):" GridPane.rowIndex="2" />
+                                          <TextField fx:id="limiteCreditoField" promptText="Ej: 10000.00" text="10000.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          
+                                          <Label text="Score Crediticio:" GridPane.rowIndex="3" />
+                                          <TextField fx:id="scoreCrediticioField" promptText="0-1000" text="600" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          
+                                          <Label text="Ingresos Declarados (S/):" GridPane.rowIndex="4" />
+                                          <TextField fx:id="ingresosDeclaradosField" promptText="Ej: 3000.00" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          
+                                          <Label text="Ocupación:" GridPane.rowIndex="5" />
+                                          <TextField fx:id="ocupacionField" promptText="Ej: Comerciante" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          
+                                          <Label text="Empresa:" GridPane.rowIndex="6" />
+                                          <TextField fx:id="empresaField" promptText="Ej: Negocio Propio" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        
+                        <!-- Botones de acción -->
+                        <VBox spacing="15.0" alignment="CENTER">
+                           <children>
+                              <HBox spacing="15.0" alignment="CENTER">
+                                 <children>
+                                    <Button fx:id="asignarButton" onAction="#handleAsignar" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-padding: 12 25; -fx-font-size: 14px; -fx-font-weight: bold;" text="✅ Asignar Rol y Crear Registros" disable="true" />
+                                    <Button fx:id="limpiarButton" onAction="#handleLimpiar" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-padding: 12 25;" text="🗑️ Limpiar Formulario" />
+                                    <Button fx:id="cancelarButton" onAction="#handleCancelar" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-padding: 12 25;" text="❌ Cancelar" />
+                                 </children>
+                              </HBox>
+                              <Separator />
+                              <VBox spacing="8.0" alignment="CENTER" style="-fx-background-color: #fff3cd; -fx-background-radius: 8; -fx-padding: 15; -fx-border-color: #ffeaa7; -fx-border-radius: 8;">
+                                 <children>
+                                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #856404;" text="🔧 Reparación Rápida" />
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #856404;" text="Si un usuario ya tiene rol ASESOR pero no aparece en la tabla asesores:" wrapText="true" />
+                                    <Button fx:id="repararButton" onAction="#handleReparar" style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-padding: 8 20; -fx-font-weight: bold;" text="🔧 Reparar Usuarios ASESOR" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  
+                  <!-- Estado y mensajes -->
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label fx:id="statusLabel" style="-fx-font-size: 13px; -fx-text-fill: #666666;" text="Listo para asignar roles" />
+                        <ProgressBar fx:id="progressBar" prefWidth="400.0" progress="0.0" visible="false" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   <bottom>
+      <!-- Barra inferior -->
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 1 0 0 0; -fx-padding: 8 15;">
+         <children>
+            <Label style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="💡 Tip: Seleccione primero el usuario y luego el rol para configurar los campos específicos" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="footerTimeLabel" style="-fx-font-size: 11px; -fx-text-fill: #666666;" text="Fecha/Hora" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
