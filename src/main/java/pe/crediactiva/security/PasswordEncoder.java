@@ -92,6 +92,7 @@ public class PasswordEncoder {
         }
     }
     
+
     /**
      * Genera una contraseña temporal aleatoria.
      * Útil para reseteo de contraseñas.

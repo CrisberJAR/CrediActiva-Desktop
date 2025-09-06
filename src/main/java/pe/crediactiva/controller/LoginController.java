@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import pe.crediactiva.app.CrediActivaApp;
 import pe.crediactiva.model.Usuario;
 import pe.crediactiva.security.SessionManager;
+import pe.crediactiva.service.UsuarioService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -33,9 +34,14 @@ public class LoginController implements Initializable {
     private int loginAttempts = 0;
     private static final int MAX_LOGIN_ATTEMPTS = 3;
     
+    private UsuarioService usuarioService;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         logger.debug("Inicializando LoginController");
+        
+        // Inicializar servicios
+        usuarioService = new UsuarioService();
         
         // Configurar eventos
         setupEventHandlers();
@@ -145,11 +151,11 @@ public class LoginController implements Initializable {
         Task<Usuario> loginTask = new Task<Usuario>() {
             @Override
             protected Usuario call() throws Exception {
-                // Simular autenticación (aquí iría la lógica real con DAO)
-                Thread.sleep(1000); // Simular tiempo de procesamiento
+                // Simular tiempo de procesamiento
+                Thread.sleep(500);
                 
-                // Usuarios de prueba hardcodeados
-                return authenticateUser(username, password);
+                // Usar el servicio real de usuario para autenticar
+                return usuarioService.autenticar(username, password).orElse(null);
             }
             
             @Override
@@ -175,49 +181,6 @@ public class LoginController implements Initializable {
         loginThread.start();
     }
     
-    /**
-     * Autentica un usuario (implementación temporal).
-     * 
-     * @param username nombre de usuario
-     * @param password contraseña
-     * @return usuario autenticado o null si falla
-     */
-    private Usuario authenticateUser(String username, String password) {
-        // Usuarios de prueba hardcodeados
-        // En producción esto se haría con DAO y BCrypt
-        
-        if ("admin".equals(username) && "admin123".equals(password)) {
-            Usuario admin = new Usuario();
-            admin.setId(1);
-            admin.setUsername("admin");
-            admin.setNombres("Administrador");
-            admin.setApellidos("Sistema");
-            admin.setEmail("admin@crediactiva.pe");
-            return admin;
-        }
-        
-        if ("asesor1".equals(username) && "asesor123".equals(password)) {
-            Usuario asesor = new Usuario();
-            asesor.setId(2);
-            asesor.setUsername("asesor1");
-            asesor.setNombres("Carlos");
-            asesor.setApellidos("Mendoza");
-            asesor.setEmail("asesor1@crediactiva.pe");
-            return asesor;
-        }
-        
-        if ("cliente1".equals(username) && "cliente123".equals(password)) {
-            Usuario cliente = new Usuario();
-            cliente.setId(3);
-            cliente.setUsername("cliente1");
-            cliente.setNombres("María");
-            cliente.setApellidos("García");
-            cliente.setEmail("cliente1@email.com");
-            return cliente;
-        }
-        
-        return null; // Usuario no encontrado
-    }
     
     /**
      * Maneja el éxito del login.
@@ -233,18 +196,29 @@ public class LoginController implements Initializable {
         // Limpiar campos
         passwordField.clear();
         
-        // Determinar pantalla de destino según el rol del usuario
+        // Determinar pantalla de destino según el rol del usuario desde la base de datos
         String dashboardPath = "/fxml/dashboard-admin.fxml";
         String dashboardTitle = "Panel de Administración";
         
-        // En una implementación real, verificaríamos los roles desde la base de datos
-        if ("asesor1".equals(usuario.getUsername())) {
+        // Verificar roles reales del usuario desde la base de datos
+        if (usuario.esAsesor()) {
             dashboardPath = "/fxml/dashboard-asesor.fxml";
             dashboardTitle = "Panel de Asesor";
-        } else if ("cliente1".equals(usuario.getUsername())) {
+            logger.info("Redirigiendo a dashboard de ASESOR para usuario: {}", usuario.getUsername());
+        } else if (usuario.esCliente()) {
             dashboardPath = "/fxml/dashboard-cliente.fxml";
             dashboardTitle = "Panel de Cliente";
+            logger.info("Redirigiendo a dashboard de CLIENTE para usuario: {}", usuario.getUsername());
+        } else if (usuario.esAdministrador()) {
+            dashboardPath = "/fxml/dashboard-admin.fxml";
+            dashboardTitle = "Panel de Administración";
+            logger.info("Redirigiendo a dashboard de ADMINISTRADOR para usuario: {}", usuario.getUsername());
+        } else {
+            // Usuario sin rol específico, por defecto admin
+            logger.warn("Usuario {} no tiene rol específico, usando dashboard admin por defecto", usuario.getUsername());
         }
+        
+        logger.info("Cambiando a escena: {} - {}", dashboardPath, dashboardTitle);
         
         // Cambiar a la pantalla correspondiente
         CrediActivaApp.changeScene(dashboardPath, dashboardTitle);
