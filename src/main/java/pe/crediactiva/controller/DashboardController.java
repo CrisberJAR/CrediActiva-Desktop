@@ -269,27 +269,6 @@ public class DashboardController implements Initializable {
         }
     }
     
-    @FXML
-    private void handleCrearAsesor() {
-        logger.debug("Abriendo formulario de crear asesor directo");
-        statusLabel.setText("Estado: Abriendo formulario de crear asesor...");
-        
-        try {
-            // Abrir ventana de crear asesor directo
-            CrediActivaApp.openNewWindow("/fxml/crear-asesor-directo.fxml", 
-                                       "Crear Asesor Directo", 
-                                       500, 400, 
-                                       true);
-            
-            statusLabel.setText("Estado: Formulario de crear asesor abierto");
-            
-        } catch (Exception e) {
-            logger.error("Error al abrir formulario de crear asesor", e);
-            CrediActivaApp.showErrorAlert("Error", "Error al Abrir Formulario", 
-                                        "No se pudo abrir el formulario de crear asesor: " + e.getMessage());
-            statusLabel.setText("Estado: Error al abrir formulario");
-        }
-    }
     
     @FXML
     private void handleInsertarRolDirecto() {
@@ -313,27 +292,6 @@ public class DashboardController implements Initializable {
         }
     }
     
-    @FXML
-    private void handleAsignarRol() {
-        logger.debug("Abriendo formulario de asignación de roles");
-        statusLabel.setText("Estado: Abriendo formulario de asignación de roles...");
-        
-        try {
-            // Abrir ventana de asignación de roles
-            CrediActivaApp.openNewWindow("/fxml/asignar-rol.fxml", 
-                                       "Asignar Rol a Usuarios", 
-                                       900, 800, 
-                                       false);
-            
-            statusLabel.setText("Estado: Formulario de asignación de roles abierto");
-            
-        } catch (Exception e) {
-            logger.error("Error al abrir formulario de asignación de roles", e);
-            CrediActivaApp.showErrorAlert("Error", "Error al Abrir Formulario", 
-                                        "No se pudo abrir el formulario de asignación de roles: " + e.getMessage());
-            statusLabel.setText("Estado: Error al abrir formulario");
-        }
-    }
     
     @FXML
     private void handleRevisarSolicitudes() {

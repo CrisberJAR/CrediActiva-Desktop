@@ -13,13 +13,20 @@ import org.slf4j.LoggerFactory;
 import pe.crediactiva.app.CrediActivaApp;
 import pe.crediactiva.model.Rol;
 import pe.crediactiva.model.Usuario;
+import pe.crediactiva.model.Asesor;
+import pe.crediactiva.model.Cliente;
+import pe.crediactiva.model.enums.TipoRol;
 import pe.crediactiva.service.RolService;
 import pe.crediactiva.service.UsuarioService;
+import pe.crediactiva.service.AsesorService;
+import pe.crediactiva.service.ClienteService;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -75,6 +82,8 @@ public class EditarUsuarioController implements Initializable {
     // Servicios
     private UsuarioService usuarioService;
     private RolService rolService;
+    private AsesorService asesorService;
+    private ClienteService clienteService;
     
     // Datos
     private Usuario usuarioOriginal;
@@ -90,9 +99,11 @@ public class EditarUsuarioController implements Initializable {
         logger.debug("Inicializando EditarUsuarioController");
         
         try {
-            // Inicializar servicios
-            usuarioService = new UsuarioService();
-            rolService = new RolService();
+        // Inicializar servicios
+        usuarioService = new UsuarioService();
+        rolService = new RolService();
+        asesorService = new AsesorService();
+        clienteService = new ClienteService();
             
             // Configurar interfaz
             configurarFormulario();
@@ -326,6 +337,16 @@ public class EditarUsuarioController implements Initializable {
         this.usuarioOriginal = usuario;
         this.usuarioEditado = new Usuario(); // Copia para edición
         
+        // LOG DETALLADO PARA DEBUGGING
+        logger.info("🔍 Usuario recibido para edición:");
+        logger.info("  - ID: {}", usuario.getId());
+        logger.info("  - Username: {}", usuario.getUsername());
+        logger.info("  - Nombre completo: {}", usuario.getNombreCompleto());
+        logger.info("  - Roles actuales: {}", 
+                   usuario.getRoles() != null ? 
+                   usuario.getRoles().stream().map(Rol::getNombre).collect(java.util.stream.Collectors.toList()) : 
+                   "Sin roles");
+        
         cargarDatosEnFormulario(usuario);
         
         logger.debug("Usuario cargado para edición: {}", usuario.getUsername());
@@ -420,14 +441,55 @@ public class EditarUsuarioController implements Initializable {
     @FXML
     private void handleAgregarRol() {
         Rol rolSeleccionado = agregarRolComboBox.getValue();
-        if (rolSeleccionado == null) return;
+        if (rolSeleccionado == null) {
+            logger.warn("No hay rol seleccionado para agregar");
+            statusLabel.setText("Debe seleccionar un rol");
+            return;
+        }
         
-        if (!rolesUsuario.contains(rolSeleccionado)) {
+        if (usuarioOriginal == null || usuarioOriginal.getId() == null) {
+            logger.error("No hay usuario cargado o el usuario no tiene ID");
+            statusLabel.setText("Error: No hay usuario seleccionado");
+            return;
+        }
+        
+        if (rolesUsuario.contains(rolSeleccionado)) {
+            logger.warn("El usuario ya tiene el rol: {}", rolSeleccionado.getNombre());
+            statusLabel.setText("El usuario ya tiene este rol");
+            return;
+        }
+        
+        try {
+            Integer usuarioId = usuarioOriginal.getId();
+            Integer rolId = rolSeleccionado.getId();
+            
+            logger.info("🔄 Asignando rol - Usuario ID: {}, Rol ID: {} ({})", 
+                       usuarioId, rolId, rolSeleccionado.getNombre());
+            
+            // EJECUTAR INMEDIATAMENTE EL INSERT EN LA BASE DE DATOS
+            rolService.asignarRolAUsuario(usuarioId, rolId);
+            logger.info("✅ INSERT ejecutado: usuarios_roles (usuario_id={}, rol_id={})", usuarioId, rolId);
+            
+            // Crear registro específico si es ASESOR o CLIENTE
+            crearRegistroEspecificoParaRol(usuarioId, rolSeleccionado);
+            
+            // Actualizar la interfaz
             rolesUsuario.add(rolSeleccionado);
             actualizarRolesDisponiblesParaAgregar();
             
-            logger.debug("Rol agregado: {}", rolSeleccionado.getNombre());
-            statusLabel.setText("Rol agregado: " + rolSeleccionado.getNombreLegible());
+            logger.info("✅ Rol {} asignado exitosamente al usuario {} ({})", 
+                       rolSeleccionado.getNombre(), usuarioId, usuarioOriginal.getUsername());
+            statusLabel.setText("✅ Rol asignado y guardado: " + rolSeleccionado.getNombreLegible());
+            
+        } catch (Exception e) {
+            logger.error("❌ Error al asignar rol inmediatamente", e);
+            statusLabel.setText("❌ Error al asignar rol: " + e.getMessage());
+            
+            // Mostrar alerta de error
+            Platform.runLater(() -> {
+                CrediActivaApp.showErrorAlert("Error", "Error al Asignar Rol", 
+                                            "No se pudo asignar el rol: " + e.getMessage());
+            });
         }
     }
     
@@ -512,6 +574,7 @@ public class EditarUsuarioController implements Initializable {
     
     /**
      * Gestiona los cambios en los roles del usuario.
+     * Asigna/remueve roles y crea registros específicos en tablas correspondientes.
      */
     private void gestionarRoles(Integer usuarioId) {
         try {
@@ -528,14 +591,22 @@ public class EditarUsuarioController implements Initializable {
                 .filter(rol -> !rolesUsuario.contains(rol))
                 .collect(Collectors.toList());
             
-            // Agregar nuevos roles
+            // Agregar nuevos roles y crear registros específicos
             for (Rol rol : rolesParaAgregar) {
+                // Asignar rol en usuarios_roles
                 rolService.asignarRolAUsuario(usuarioId, rol.getId());
                 logger.debug("Rol asignado: {} -> Usuario {}", rol.getNombre(), usuarioId);
+                
+                // Crear registro específico según el tipo de rol
+                crearRegistroEspecificoParaRol(usuarioId, rol);
             }
             
-            // Remover roles
+            // Remover roles y eliminar registros específicos
             for (Rol rol : rolesParaRemover) {
+                // Eliminar registro específico antes de remover el rol
+                eliminarRegistroEspecificoParaRol(usuarioId, rol);
+                
+                // Remover rol de usuarios_roles
                 rolService.removerRolDeUsuario(usuarioId, rol.getId());
                 logger.debug("Rol removido: {} -> Usuario {}", rol.getNombre(), usuarioId);
             }
@@ -544,6 +615,157 @@ public class EditarUsuarioController implements Initializable {
             logger.error("Error al gestionar roles del usuario", e);
             CrediActivaApp.showWarningAlert("Advertencia", "Error en Roles", 
                                           "El usuario fue actualizado pero hubo problemas con los roles: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Crea el registro específico en la tabla correspondiente según el rol.
+     */
+    private void crearRegistroEspecificoParaRol(Integer usuarioId, Rol rol) {
+        try {
+            TipoRol tipoRol = TipoRol.valueOf(rol.getNombre().toUpperCase());
+            
+            switch (tipoRol) {
+                case ASESOR:
+                    crearRegistroAsesor(usuarioId);
+                    break;
+                case CLIENTE:
+                    crearRegistroCliente(usuarioId);
+                    break;
+                default:
+                    logger.debug("Rol {} no requiere registro específico", rol.getNombre());
+                    break;
+            }
+        } catch (Exception e) {
+            logger.error("Error al crear registro específico para rol {}: {}", rol.getNombre(), e.getMessage());
+            throw e;
+        }
+    }
+    
+    /**
+     * Elimina el registro específico de la tabla correspondiente según el rol.
+     */
+    private void eliminarRegistroEspecificoParaRol(Integer usuarioId, Rol rol) {
+        try {
+            TipoRol tipoRol = TipoRol.valueOf(rol.getNombre().toUpperCase());
+            
+            switch (tipoRol) {
+                case ASESOR:
+                    eliminarRegistroAsesor(usuarioId);
+                    break;
+                case CLIENTE:
+                    eliminarRegistroCliente(usuarioId);
+                    break;
+                default:
+                    logger.debug("Rol {} no tiene registro específico que eliminar", rol.getNombre());
+                    break;
+            }
+        } catch (Exception e) {
+            logger.error("Error al eliminar registro específico para rol {}: {}", rol.getNombre(), e.getMessage());
+            // No lanzar excepción aquí para no interrumpir la eliminación del rol
+        }
+    }
+    
+    /**
+     * Crea un registro en la tabla asesores con valores por defecto.
+     */
+    private void crearRegistroAsesor(Integer usuarioId) {
+        try {
+            // Verificar si ya existe un asesor para este usuario
+            Optional<Asesor> asesorExistente = asesorService.buscarPorUsuarioId(usuarioId);
+            if (asesorExistente.isPresent()) {
+                logger.warn("Ya existe un asesor para el usuario ID: {}", usuarioId);
+                return;
+            }
+            
+            // Obtener el usuario para crear el asesor
+            Usuario usuario = usuarioService.buscarPorId(usuarioId).orElse(null);
+            if (usuario == null) {
+                throw new RuntimeException("Usuario no encontrado con ID: " + usuarioId);
+            }
+            
+            // Crear nuevo asesor con valores por defecto usando el servicio
+            BigDecimal comisionPorDefecto = BigDecimal.valueOf(0.02); // 2%
+            BigDecimal metaPorDefecto = BigDecimal.ZERO;
+            
+            Asesor asesorCreado = asesorService.crearAsesor(usuario, comisionPorDefecto, metaPorDefecto);
+            if (asesorCreado != null) {
+                logger.info("✅ Registro de asesor creado para usuario ID: {} con código: {}", 
+                           usuarioId, asesorCreado.getCodigoAsesor());
+            }
+            
+        } catch (Exception e) {
+            logger.error("❌ Error al crear registro de asesor para usuario ID: {}", usuarioId, e);
+            throw new RuntimeException("No se pudo crear el registro de asesor: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Crea un registro en la tabla clientes con valores por defecto.
+     */
+    private void crearRegistroCliente(Integer usuarioId) {
+        try {
+            // Verificar si ya existe un cliente para este usuario
+            Optional<Cliente> clienteExistente = clienteService.buscarPorUsuarioId(usuarioId);
+            if (clienteExistente.isPresent()) {
+                logger.warn("Ya existe un cliente para el usuario ID: {}", usuarioId);
+                return;
+            }
+            
+            // Obtener el usuario para crear el cliente
+            Usuario usuario = usuarioService.buscarPorId(usuarioId).orElse(null);
+            if (usuario == null) {
+                throw new RuntimeException("Usuario no encontrado con ID: " + usuarioId);
+            }
+            
+            // Crear nuevo cliente con valores por defecto usando el servicio
+            Cliente.TipoCliente tipoDefecto = Cliente.TipoCliente.NUEVO;
+            BigDecimal limiteDefecto = BigDecimal.valueOf(15000.00);
+            int scoreDefecto = 650;
+            
+            Cliente clienteCreado = clienteService.crearCliente(usuario, tipoDefecto, limiteDefecto, scoreDefecto);
+            if (clienteCreado != null) {
+                logger.info("✅ Registro de cliente creado para usuario ID: {} con código: {}", 
+                           usuarioId, clienteCreado.getCodigoCliente());
+            }
+            
+        } catch (Exception e) {
+            logger.error("❌ Error al crear registro de cliente para usuario ID: {}", usuarioId, e);
+            throw new RuntimeException("No se pudo crear el registro de cliente: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Elimina el registro de asesor para el usuario.
+     */
+    private void eliminarRegistroAsesor(Integer usuarioId) {
+        try {
+            Optional<Asesor> asesorOpt = asesorService.buscarPorUsuarioId(usuarioId);
+            if (asesorOpt.isPresent()) {
+                boolean desactivado = asesorService.desactivarAsesor(asesorOpt.get().getId());
+                if (desactivado) {
+                    logger.info("✅ Registro de asesor desactivado para usuario ID: {}", usuarioId);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("❌ Error al desactivar registro de asesor para usuario ID: {}", usuarioId, e);
+        }
+    }
+    
+    /**
+     * Elimina el registro de cliente para el usuario.
+     */
+    private void eliminarRegistroCliente(Integer usuarioId) {
+        try {
+            Optional<Cliente> clienteOpt = clienteService.buscarPorUsuarioId(usuarioId);
+            if (clienteOpt.isPresent()) {
+                boolean desactivado = clienteService.desactivarCliente(clienteOpt.get().getId());
+                if (desactivado) {
+                    logger.info("✅ Registro de cliente desactivado para usuario ID: {}", usuarioId);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("❌ Error al desactivar registro de cliente para usuario ID: {}", usuarioId, e);
         }
     }
     
